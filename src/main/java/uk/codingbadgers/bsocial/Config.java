@@ -11,5 +11,8 @@ public class Config {
 
     @Getter
     private final boolean logToConsole = true;
+    
+    @Getter
+    private final String pmFormat = "&9{sender}->{target}: &b{message}";
 
 }

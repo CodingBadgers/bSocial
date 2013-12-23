@@ -4,6 +4,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import uk.codingbadgers.bsocial.MuteData;
+import uk.codingbadgers.bsocial.bSocial;
 
 public class Messages {
 
@@ -43,6 +44,13 @@ public class Messages {
         return new BaseComponent[]{
             createPrefix(),
             createComponent("/unmute <player>", ChatColor.AQUA)
+        };
+    }
+    
+    public static BaseComponent[] pmUsage() {
+        return new BaseComponent[]{
+            createPrefix(),
+            createComponent("/pm <player> <message>", ChatColor.AQUA)
         };
     }
     
@@ -197,6 +205,17 @@ public class Messages {
         return new BaseComponent[]{
             createPrefix(),
             createComponent(player + " is not muted", ChatColor.RED)
+        };
+    }
+
+    public static BaseComponent[] formatPM(String sender, String target, String message) {
+        String output = ChatColor.translateAlternateColorCodes('&', bSocial.getConfig().getPmFormat());
+        output = output.replaceAll("\\{sender\\}", sender);
+        output = output.replaceAll("\\{target\\}", target);
+        output = output.replaceAll("\\{message\\}", message);
+        
+        return new BaseComponent[]{
+            createComponent(output, ChatColor.RESET)
         };
     }
 
