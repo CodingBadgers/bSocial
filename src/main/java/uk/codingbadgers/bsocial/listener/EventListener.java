@@ -13,34 +13,39 @@ import net.md_5.bungee.event.EventHandler;
 
 public class EventListener implements Listener {
 
-	@EventHandler
-	public void onPlayerChat(ChatEvent event) {
-		ProxiedPlayer player = (ProxiedPlayer) event.getSender();
-		
-		if (event.isCommand()) {
-			return;
-		}
-		
-		event.setCancelled(true);
-		
-		Chatter chatter = bSocial.getChatterManager().getChatter(player);
-		Channel active = chatter.getActiveChannel();
-		
-		if (active == null) {
-			chatter.sendMessage(Messages.noChannel());
-			return;
-		}
-		
-		active.sendMessage(chatter, event.getMessage());
-	}
+    @EventHandler
+    public void onPlayerChat(ChatEvent event) {
+        final ProxiedPlayer player = (ProxiedPlayer) event.getSender();
 
-	@EventHandler
-	public void onPlayerJoin(PostLoginEvent event) {
-		bSocial.getChatterManager().loadChatter(event.getPlayer());
-	}
+        if (event.isCommand()) {
+            return;
+        }
 
-	@EventHandler
-	public void onPlayerJoin(PlayerDisconnectEvent event) {
-		bSocial.getChatterManager().removeChatter(event.getPlayer());
-	}
+        event.setCancelled(true);
+
+        Chatter chatter = bSocial.getChatterManager().getChatter(player);
+        Channel active = chatter.getActiveChannel();
+
+        if (active == null) {
+            chatter.sendMessage(Messages.noChannel());
+            return;
+        }
+
+        if (chatter.isMuted()) {
+            chatter.sendMessage(Messages.muted());
+            return;
+        }
+
+        active.sendMessage(chatter, event.getMessage());
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PostLoginEvent event) {
+        bSocial.getChatterManager().loadChatter(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerDisconnectEvent event) {
+        bSocial.getChatterManager().removeChatter(event.getPlayer());
+    }
 }

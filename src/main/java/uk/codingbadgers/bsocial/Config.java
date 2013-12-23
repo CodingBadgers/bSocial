@@ -6,8 +6,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Config {
 
-	@Getter private int configVersion = bSocial.CURRENT_CONFIG_VERSION;
-	
-	@Getter private boolean logToConsole = true;
-	
+    @Getter
+    private final int configVersion = bSocial.CURRENT_CONFIG_VERSION;
+
+    @Getter
+    private final boolean logToConsole = true;
+
 }
