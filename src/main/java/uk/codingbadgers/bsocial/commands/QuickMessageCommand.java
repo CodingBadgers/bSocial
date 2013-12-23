@@ -45,6 +45,11 @@ public class QuickMessageCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!bSocial.getChannelManager().exists(getName())) { // Channel has been removed
+            sender.sendMessage("Unknown command. Type \"/help\" for help");
+            return;
+        }
+        
         if (!sender.hasPermission("bsocial.channel." + this.getName())) {
             sender.sendMessage(ProxyServer.getInstance().getTranslation("no_permission"));
             return;
@@ -70,9 +75,9 @@ public class QuickMessageCommand extends Command {
         StringBuilder builder = new StringBuilder();
         
         for (String arg : args) {
-            builder.append(arg);
+            builder.append(arg).append(" ");
         }
         
-        return builder.toString();
+        return builder.toString().trim();
     }
 }

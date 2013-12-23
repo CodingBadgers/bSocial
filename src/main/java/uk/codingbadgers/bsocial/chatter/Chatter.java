@@ -62,8 +62,6 @@ public class Chatter {
             message[j][i++] = component;
         }
 
-        System.out.println(message.length);
-
         for (BaseComponent[] component : message) {
 
             if (component == null) {

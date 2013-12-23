@@ -44,6 +44,7 @@ public class ChannelManager {
 
     public void addChannel(Channel channel) {
         channels.add(channel);
+        ProxyServer.getInstance().getPluginManager().registerCommand(bSocial.getInstance(), new QuickMessageCommand(channel));
     }
 
     public void loadChannels() {
@@ -54,7 +55,6 @@ public class ChannelManager {
                 Channel channel = gson.fromJson(new FileReader(file), Channel.class);
                 addChannel(channel);
                 bSocial.getInstance().getLogger().log(Level.INFO, "Loaded channel {0}", channel.getName());
-                ProxyServer.getInstance().getPluginManager().registerCommand(bSocial.getInstance(), new QuickMessageCommand(channel));
             } catch (FileNotFoundException e) {
                 bSocial.getInstance().getLogger().log(Level.INFO, String.format("Error loading channel %1$s", file.getName()), e);
             }
