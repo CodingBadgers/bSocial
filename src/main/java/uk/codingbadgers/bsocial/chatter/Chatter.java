@@ -8,23 +8,45 @@ import lombok.Setter;
 
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import uk.codingbadgers.bsocial.Config.AntiSpam;
 import uk.codingbadgers.bsocial.MuteData;
 
 import uk.codingbadgers.bsocial.bSocial;
 import uk.codingbadgers.bsocial.channel.Channel;
+import uk.codingbadgers.bsocial.json.NonSerialized;
 
 @Data
 public class Chatter {
 
+    @Data
+    public static class AntiSpamData {
+        private long logintime = System.currentTimeMillis();
+        private long lastmessagetime = System.currentTimeMillis();
+        private String lastmessage = "";
+    }
+   
+    public static enum AntiSpamReason {
+        JOIN_TIME,
+        MESSAGE_TIME,
+        MESSAGE,
+        CAPS,
+        NONE,
+        ;
+    }
+    
     private final String name;
     @Setter(AccessLevel.NONE)
     private ProxiedPlayer player;
     private MuteData mutedata;
     private Channel activeChannel;
+    @NonSerialized
+    private AntiSpamData antispam;
 
     public Chatter(ProxiedPlayer player) {
         this.player = player;
         this.name = player.getName();
+        this.antispam = new AntiSpamData();
+        
         setActiveChannel(bSocial.getChannelManager().getDefaultChannel());
     }
 
@@ -104,4 +126,45 @@ public class Chatter {
     public boolean isMuted() {
         return mutedata != null;   
     }
+    
+    public AntiSpamReason checkSpam(String message) {
+        if (player.hasPermission("bsocial.antispam.override")) {
+            return AntiSpamReason.NONE;
+        }
+        
+        AntiSpam settings = bSocial.getConfig().getAntiSpamSettings();
+        String lastmessage = antispam.getLastmessage();
+        long lastmessagetime = antispam.getLastmessagetime();
+        long curtime = System.currentTimeMillis();
+        
+        antispam.setLastmessagetime(curtime);
+        antispam.setLastmessage(message);
+        
+        if ((curtime - antispam.getLogintime()) < settings.getLoginDelay()) {
+            return AntiSpamReason.JOIN_TIME;
+        }
+        
+        if ((curtime - lastmessagetime) < settings.getMessageDelay()) {
+            return AntiSpamReason.MESSAGE_TIME;
+        }
+        
+        if (message.equalsIgnoreCase(lastmessage)) {
+            return AntiSpamReason.MESSAGE;
+        }
+        
+        int caps = 0;
+        for (char c : message.toCharArray()) {
+            if (Character.isAlphabetic(c) && Character.isUpperCase(c)) {
+                caps++;
+            }
+        }
+        
+        int length = message.replaceAll(" ", "").length();
+        if ((((float) caps / (float) length) * 100) >= settings.getCapsPercentage()) {
+            return AntiSpamReason.CAPS;
+        }
+        
+        return AntiSpamReason.NONE;
+    }
+        
 }

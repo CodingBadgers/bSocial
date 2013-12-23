@@ -219,4 +219,25 @@ public class Messages {
         };
     }
 
+    public static BaseComponent[] spamJoinTime(String player) {
+        return new BaseComponent[]{
+            createPrefix(),
+            createComponent("You cannot talk in the first " + (bSocial.getConfig().getAntiSpamSettings().getLoginDelay() / 1000f) + " seconds of logging in", ChatColor.RED)
+        };
+    }
+
+    public static BaseComponent[] spamMessageTime(String player) {
+        return new BaseComponent[]{
+            createPrefix(),
+            createComponent("Please do not spam the chat", ChatColor.RED)
+        };
+    }
+
+    public static BaseComponent[] spamMessage(String player) {
+        return new BaseComponent[]{
+            createPrefix(),
+            createComponent("Please do not spam the chat", ChatColor.RED)
+        };
+    }
+
 }
