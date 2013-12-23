@@ -3,9 +3,22 @@ package uk.codingbadgers.bsocial.messaging;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import uk.codingbadgers.bsocial.MuteData;
 
 public class Messages {
 
+    private static BaseComponent newline() {
+        return new ComponentBuilder("\n").create()[0];
+    }
+
+    private static BaseComponent createComponent(String message, ChatColor color) {
+        return new ComponentBuilder(message).bold(false).color(color).create()[0];
+    }
+
+    private static BaseComponent createPrefix() {
+        return new ComponentBuilder("[bSocial] ").bold(true).color(ChatColor.BLUE).create()[0];
+    }
+    
     public static BaseComponent[] chatUsage() {
         return new BaseComponent[]{
             createPrefix(),
@@ -15,11 +28,24 @@ public class Messages {
             createComponent("/chat leave <channel>", ChatColor.AQUA),
             newline(),
             createPrefix(),
-            createComponent("/chat list", ChatColor.AQUA),
-            newline()
+            createComponent("/chat list", ChatColor.AQUA)
         };
     }
 
+    public static BaseComponent[] muteUsage() {
+        return new BaseComponent[]{
+            createPrefix(),
+            createComponent("/mute <player> [time<frame>] <reason>", ChatColor.AQUA)
+        };
+    }
+    
+    public static BaseComponent[] unmuteUsage() {
+        return new BaseComponent[]{
+            createPrefix(),
+            createComponent("/unmute <player>", ChatColor.AQUA)
+        };
+    }
+    
     public static BaseComponent[] channelDoesNotExist(String channel) {
         return new BaseComponent[]{
             createPrefix(),
@@ -125,16 +151,53 @@ public class Messages {
         };
     }
 
-    private static BaseComponent newline() {
-        return new ComponentBuilder("\n").create()[0];
+    public static BaseComponent[] noPlayer(String player) {
+        return new BaseComponent[]{
+            createPrefix(),
+            createComponent("Cannot find a player by the name of " + player, ChatColor.RED)
+        };
     }
 
-    private static BaseComponent createComponent(String message, ChatColor color) {
-        return new ComponentBuilder(message).bold(false).color(color).create()[0];
+    public static BaseComponent[] muted(MuteData data) {
+        return new BaseComponent[]{
+            createPrefix(),
+            createComponent("You have been muted by " + data.getAdmin() + " for " + data.getReason(), ChatColor.AQUA)
+        };
     }
 
-    private static BaseComponent createPrefix() {
-        return new ComponentBuilder("[bSocial] ").bold(true).color(ChatColor.BLUE).create()[0];
+    public static BaseComponent[] unmuted(String admin) {
+        return new BaseComponent[]{
+            createPrefix(),
+            createComponent("You have been unmuted by " + admin, ChatColor.AQUA)
+        };
+    }
+
+    public static BaseComponent[] mutedSuccess(String target, MuteData data) {
+        return new BaseComponent[]{
+            createPrefix(),
+            createComponent("You have muted " + target + " for " + data.getReason(), ChatColor.AQUA)
+        };
+    }
+
+    public static BaseComponent[] unmuteSuccess(String target) {
+        return new BaseComponent[]{
+            createPrefix(),
+            createComponent("You have unmuted " + target, ChatColor.AQUA)
+        };
+    }
+
+    public static BaseComponent[] alreadyMuted(String player) {
+        return new BaseComponent[]{
+            createPrefix(),
+            createComponent(player + " is already muted", ChatColor.RED)
+        };
+    }
+
+    public static BaseComponent[] notMuted(String player) {
+        return new BaseComponent[]{
+            createPrefix(),
+            createComponent(player + " is not muted", ChatColor.RED)
+        };
     }
 
 }

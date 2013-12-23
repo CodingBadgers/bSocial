@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import uk.codingbadgers.bsocial.MuteData;
 
 import uk.codingbadgers.bsocial.bSocial;
 import uk.codingbadgers.bsocial.channel.Channel;
@@ -18,7 +19,7 @@ public class Chatter {
     private final String name;
     @Setter(AccessLevel.NONE)
     private ProxiedPlayer player;
-    private boolean muted;
+    private MuteData mutedata;
     private Channel activeChannel;
 
     public Chatter(ProxiedPlayer player) {
@@ -98,5 +99,9 @@ public class Chatter {
         }
 
         channel.leave(this);
+    }
+    
+    public boolean isMuted() {
+        return mutedata != null;   
     }
 }

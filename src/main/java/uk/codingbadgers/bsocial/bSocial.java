@@ -19,6 +19,8 @@ import com.google.gson.JsonIOException;
 import java.util.logging.Level;
 
 import net.md_5.bungee.api.plugin.Plugin;
+import uk.codingbadgers.bsocial.commands.MuteCommand;
+import uk.codingbadgers.bsocial.commands.UnmuteCommand;
 
 public class bSocial extends Plugin {
 
@@ -48,7 +50,10 @@ public class bSocial extends Plugin {
         channelManager.loadChannels();
 
         getProxy().getPluginManager().registerListener(this, new EventListener());
+        
         getProxy().getPluginManager().registerCommand(this, new ChatCommand());
+        getProxy().getPluginManager().registerCommand(this, new MuteCommand());
+        getProxy().getPluginManager().registerCommand(this, new UnmuteCommand());
     }
 
     @Override

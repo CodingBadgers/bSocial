@@ -7,13 +7,17 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class ChatterManager {
 
-    private List<Chatter> chatters = new ArrayList<>();
+    private final List<Chatter> chatters = new ArrayList<>();
 
     public Chatter getChatter(ProxiedPlayer player) {
+        return getChatter(player.getName());
+    }
+
+    public Chatter getChatter(String player) {
         List<Chatter> chatters = new ArrayList<>(this.chatters);
 
         for (Chatter chatter : chatters) {
-            if (chatter.getName().equalsIgnoreCase(player.getName())) {
+            if (chatter.getName().equalsIgnoreCase(player)) {
                 return chatter;
             }
         }
