@@ -20,64 +20,64 @@ import uk.codingbadgers.bsocial.commands.QuickMessageCommand;
 
 public class ChannelManager {
 
-    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    @Getter
-    private final List<Channel> channels;
-    @Getter
-    private Channel defaultChannel = null;
+	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	@Getter
+	private final List<Channel> channels;
+	@Getter
+	private Channel defaultChannel = null;
 
-    public ChannelManager() {
-        this.channels = new ArrayList<>();
-    }
+	public ChannelManager() {
+		this.channels = new ArrayList<>();
+	}
 
-    public Channel getChannel(String name) {
-        List<Channel> channels = new ArrayList<>(this.channels);
+	public Channel getChannel(String name) {
+		List<Channel> channels = new ArrayList<>(this.channels);
 
-        for (Channel channel : channels) {
-            if (channel.getName().equalsIgnoreCase(name)) {
-                return channel;
-            }
-        }
+		for (Channel channel : channels) {
+			if (channel.getName().equalsIgnoreCase(name)) {
+				return channel;
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    public void addChannel(Channel channel) {
-    	channel.setup();
-        channel.save();
-        channels.add(channel);
-        
-        ProxyServer.getInstance().getPluginManager().registerCommand(bSocial.getInstance(), new QuickMessageCommand(channel));
-    }
+	public void addChannel(Channel channel) {
+		channel.setup();
+		channel.save();
+		channels.add(channel);
 
-    public void loadChannels() {
-        File dir = new File(bSocial.getInstance().getDataFolder(), "channels");
+		ProxyServer.getInstance().getPluginManager().registerCommand(bSocial.getInstance(), new QuickMessageCommand(channel));
+	}
 
-        for (File file : dir.listFiles()) {
-            try {
-                Channel channel = gson.fromJson(new FileReader(file), Channel.class);
-                addChannel(channel);
-                bSocial.getInstance().getLogger().log(Level.INFO, "Loaded channel {0}", channel.getName());
-            } catch (FileNotFoundException e) {
-                bSocial.getInstance().getLogger().log(Level.INFO, String.format("Error loading channel %1$s", file.getName()), e);
-            }
-        }
+	public void loadChannels() {
+		File dir = new File(bSocial.getInstance().getDataFolder(), "channels");
 
-        defaultChannel = getChannel(bSocial.getConfig().getDefaultChannel());
-    }
-    
-    public void saveChannels() {
-        for (Channel channel : channels) {
-        	channel.save();
-        }
-    }
+		for (File file : dir.listFiles()) {
+			try {
+				Channel channel = gson.fromJson(new FileReader(file), Channel.class);
+				addChannel(channel);
+				bSocial.getInstance().getLogger().log(Level.INFO, "Loaded channel {0}", channel.getName());
+			} catch (FileNotFoundException e) {
+				bSocial.getInstance().getLogger().log(Level.INFO, String.format("Error loading channel %1$s", file.getName()), e);
+			}
+		}
 
-    public boolean exists(String name) {
-        return getChannel(name) != null;
-    }
+		defaultChannel = getChannel(bSocial.getConfig().getDefaultChannel());
+	}
 
-    public void removeChannel(Channel channel) {
-        channels.remove(channel);
-        channel.delete();
-    }
+	public void saveChannels() {
+		for (Channel channel : channels) {
+			channel.save();
+		}
+	}
+
+	public boolean exists(String name) {
+		return getChannel(name) != null;
+	}
+
+	public void removeChannel(Channel channel) {
+		channels.remove(channel);
+		channel.delete();
+	}
 }

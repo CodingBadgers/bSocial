@@ -27,121 +27,117 @@ import uk.codingbadgers.bsocial.logging.LoggingHandler;
 
 public class bSocial extends Plugin {
 
-    public static final int CURRENT_CONFIG_VERSION = 0x01;
-    @Getter
-    private static final Gson gson = new GsonBuilder()
-                                        .setExclusionStrategies(new JsonExclusionStrategy())
-                                        .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
-                                        .setPrettyPrinting()
-                                        .create();
+	public static final int CURRENT_CONFIG_VERSION = 0x01;
+	@Getter
+	private static final Gson gson = new GsonBuilder().setExclusionStrategies(new JsonExclusionStrategy()).setFieldNamingPolicy(FieldNamingPolicy.IDENTITY).setPrettyPrinting().create();
 
-    @Getter
-    private static bSocial instance;
-    @Getter
-    private static Config config;
-    @Getter
-    private static ChatterManager chatterManager;
-    @Getter
-    private static ChannelManager channelManager;
-    @Getter 
-    private static LoggingHandler logHandler;
+	@Getter
+	private static bSocial instance;
+	@Getter
+	private static Config config;
+	@Getter
+	private static ChatterManager chatterManager;
+	@Getter
+	private static ChannelManager channelManager;
+	@Getter
+	private static LoggingHandler logHandler;
 
-    @Override
-    public void onLoad() {
-        instance = this;
-    }
+	@Override
+	public void onLoad() {
+		instance = this;
+	}
 
-    @Override
-    public void onEnable() {
-        chatterManager = new ChatterManager();
-        channelManager = new ChannelManager();
+	@Override
+	public void onEnable() {
+		chatterManager = new ChatterManager();
+		channelManager = new ChannelManager();
 
-        loadConfig();
+		loadConfig();
 
-        channelManager.loadChannels();
+		channelManager.loadChannels();
 
-        getProxy().getPluginManager().registerListener(this, new EventListener());
-        
-        getProxy().getPluginManager().registerCommand(this, new ChatCommand());
-        getProxy().getPluginManager().registerCommand(this, new MuteCommand());
-        getProxy().getPluginManager().registerCommand(this, new UnmuteCommand());
-        getProxy().getPluginManager().registerCommand(this, new PrivateMessageCommand());
-        
-        for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
-            chatterManager.loadChatter(player);
-        }
-    }
+		getProxy().getPluginManager().registerListener(this, new EventListener());
 
-    @Override
-    public void onDisable() {
-        
-        for (Chatter chatter : chatterManager.getChatters()) {
-            chatterManager.removeChatter(chatter);
-        }
-        
-        instance = null;
-        chatterManager = null;
-        channelManager = null;
-    }
+		getProxy().getPluginManager().registerCommand(this, new ChatCommand());
+		getProxy().getPluginManager().registerCommand(this, new MuteCommand());
+		getProxy().getPluginManager().registerCommand(this, new UnmuteCommand());
+		getProxy().getPluginManager().registerCommand(this, new PrivateMessageCommand());
 
-    private void loadConfig() throws ConfigException {
-        config = new Config();
-        File configFile = new File(this.getDataFolder(), "config.json");
+		for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+			chatterManager.loadChatter(player);
+		}
+	}
 
-        try {
-            if (!configFile.exists()) {
-                if (!configFile.getParentFile().exists()) {
-                    if (!configFile.getParentFile().mkdirs()) {
-                        throw new ConfigException("Error creating datafolder");
-                    }
-                }
+	@Override
+	public void onDisable() {
 
-                try (FileWriter writer = new FileWriter(configFile)) {
-                    gson.toJson(config, writer);
-                    writer.flush();
-                }
-            }
+		for (Chatter chatter : chatterManager.getChatters()) {
+			chatterManager.removeChatter(chatter);
+		}
 
-            try (FileReader reader = new FileReader(configFile)) {
-                config = gson.fromJson(reader, Config.class);
-            }
+		instance = null;
+		chatterManager = null;
+		channelManager = null;
+	}
 
-            if (config == null || config.getConfigVersion() != CURRENT_CONFIG_VERSION) {
-                File backup = new File(this.getDataFolder(), "config.json." + config.getConfigVersion());
+	private void loadConfig() throws ConfigException {
+		config = new Config();
+		File configFile = new File(this.getDataFolder(), "config.json");
 
-                getLogger().log(Level.WARNING, "----------------------------------------------------------------");
-                getLogger().log(Level.WARNING, "Outdated config, regenerating.");
-                getLogger().log(Level.WARNING, "The old config will be located at \"plugins/bSocial/{0}\".", backup.getName());
-                getLogger().log(Level.WARNING, "Please note you will have to resetup parts of the config");
-                getLogger().log(Level.WARNING, "----------------------------------------------------------------");
+		try {
+			if (!configFile.exists()) {
+				if (!configFile.getParentFile().exists()) {
+					if (!configFile.getParentFile().mkdirs()) {
+						throw new ConfigException("Error creating datafolder");
+					}
+				}
 
-                if (backup.exists() && !backup.delete()) {
-                    throw new ConfigException("Error deleting backup config file (" + backup.getName() + ")");
-                }
+				try (FileWriter writer = new FileWriter(configFile)) {
+					gson.toJson(config, writer);
+					writer.flush();
+				}
+			}
 
-                if (!configFile.renameTo(backup)) {
-                    throw new ConfigException("Error backing up old config file");
-                }
+			try (FileReader reader = new FileReader(configFile)) {
+				config = gson.fromJson(reader, Config.class);
+			}
 
-                if (configFile.exists() && !configFile.delete()) {
-                    throw new ConfigException("Failed to delete old config file");
-                }
+			if (config == null || config.getConfigVersion() != CURRENT_CONFIG_VERSION) {
+				File backup = new File(this.getDataFolder(), "config.json." + config.getConfigVersion());
 
-                try (FileWriter writer = new FileWriter(configFile)) {
-                    config = new Config();
-                    gson.toJson(config, writer);
-                    writer.flush();
-                }
-            }
+				getLogger().log(Level.WARNING, "----------------------------------------------------------------");
+				getLogger().log(Level.WARNING, "Outdated config, regenerating.");
+				getLogger().log(Level.WARNING, "The old config will be located at \"plugins/bSocial/{0}\".", backup.getName());
+				getLogger().log(Level.WARNING, "Please note you will have to resetup parts of the config");
+				getLogger().log(Level.WARNING, "----------------------------------------------------------------");
 
-        } catch (JsonIOException | IOException e) {
-            throw new ConfigException(e);
-        }
-        
-        try {
-            logHandler = config.getLogHandler().newHandler();
-        } catch (ReflectiveOperationException ex) {
-            getLogger().log(Level.SEVERE, "Error setting up log handler", ex);
-        }
-    }
+				if (backup.exists() && !backup.delete()) {
+					throw new ConfigException("Error deleting backup config file (" + backup.getName() + ")");
+				}
+
+				if (!configFile.renameTo(backup)) {
+					throw new ConfigException("Error backing up old config file");
+				}
+
+				if (configFile.exists() && !configFile.delete()) {
+					throw new ConfigException("Failed to delete old config file");
+				}
+
+				try (FileWriter writer = new FileWriter(configFile)) {
+					config = new Config();
+					gson.toJson(config, writer);
+					writer.flush();
+				}
+			}
+
+		} catch (JsonIOException | IOException e) {
+			throw new ConfigException(e);
+		}
+
+		try {
+			logHandler = config.getLogHandler().newHandler();
+		} catch (ReflectiveOperationException ex) {
+			getLogger().log(Level.SEVERE, "Error setting up log handler", ex);
+		}
+	}
 }

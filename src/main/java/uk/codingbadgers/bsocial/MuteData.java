@@ -4,15 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
- *
+ * 
  * @author james
  */
 @Data
 @AllArgsConstructor
 public class MuteData {
-    
-    private long endtime;
-    private String admin;
-    private String reason;
-    
+
+	private long endtime;
+	private String admin;
+	private String reason;
+
 }

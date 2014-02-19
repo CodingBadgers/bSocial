@@ -8,50 +8,50 @@ import uk.codingbadgers.bsocial.chatter.Chatter;
 import uk.codingbadgers.bsocial.messaging.Messages;
 
 /**
- *
+ * 
  * @author james
  */
 public class UnmuteCommand extends Command {
 
-    public UnmuteCommand() {
-        super("unmute", "bsocial.admin.unmute");
-    }
+	public UnmuteCommand() {
+		super("unmute", "bsocial.admin.unmute");
+	}
 
-    @Override
-    public void execute(CommandSender sender, String[] args) {
+	@Override
+	public void execute(CommandSender sender, String[] args) {
 
-        if (!(sender instanceof ProxiedPlayer)) {
-            sender.sendMessage(Messages.playerOnly());
-            return;
-        }
+		if (!(sender instanceof ProxiedPlayer)) {
+			sender.sendMessage(Messages.playerOnly());
+			return;
+		}
 
-        Chatter chatter = bSocial.getChatterManager().getChatter((ProxiedPlayer) sender);
+		Chatter chatter = bSocial.getChatterManager().getChatter((ProxiedPlayer) sender);
 
-        if (args.length != 1) {
-            chatter.sendMessage(Messages.unmuteUsage());
-            return;
-        }
-        
-        // Get the player 
-        
-        String player = args[0];
-        
-        Chatter target = bSocial.getChatterManager().getChatter(player);
-        
-        if (target == null) {
-            chatter.sendMessage(Messages.noPlayer(player));
-            return;
-        }
+		if (args.length != 1) {
+			chatter.sendMessage(Messages.unmuteUsage());
+			return;
+		}
 
-        if (!target.isMuted()) {
-            chatter.sendMessage(Messages.notMuted(player));
-            return;
-        }
-        
-        target.setMutedata(null);
-        
-        target.sendMessage(Messages.unmuted(sender.getName()));
-        chatter.sendMessage(Messages.unmuteSuccess(target.getName()));
-    }
+		// Get the player 
+
+		String player = args[0];
+
+		Chatter target = bSocial.getChatterManager().getChatter(player);
+
+		if (target == null) {
+			chatter.sendMessage(Messages.noPlayer(player));
+			return;
+		}
+
+		if (!target.isMuted()) {
+			chatter.sendMessage(Messages.notMuted(player));
+			return;
+		}
+
+		target.setMutedata(null);
+
+		target.sendMessage(Messages.unmuted(sender.getName()));
+		chatter.sendMessage(Messages.unmuteSuccess(target.getName()));
+	}
 
 }
