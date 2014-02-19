@@ -2,11 +2,13 @@ package uk.codingbadgers.bsocial.chatter;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class ChatterManager {
 
+    @Getter
     private final List<Chatter> chatters = new ArrayList<>();
 
     public Chatter getChatter(ProxiedPlayer player) {
@@ -35,10 +37,16 @@ public class ChatterManager {
         if (chatter == null) {
             return false;
         }
-
+        
+        return removeChatter(chatter);
+    }
+    
+    public boolean removeChatter(Chatter chatter) {
+        chatter.save();
         chatter.destroy();
         chatters.remove(chatter);
         return true;
     }
+    
 
 }

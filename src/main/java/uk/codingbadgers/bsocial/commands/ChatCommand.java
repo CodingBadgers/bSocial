@@ -12,6 +12,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
+@SuppressWarnings("deprecation")
 public class ChatCommand extends Command {
 
     public ChatCommand() {
@@ -29,6 +30,11 @@ public class ChatCommand extends Command {
         ChannelManager manager = bSocial.getChannelManager();
         Chatter chatter = bSocial.getChatterManager().getChatter((ProxiedPlayer) sender);
 
+        if (chatter == null) {
+        	sender.sendMessage(Messages.nullChatter());
+        	return;
+        }
+        
         if (args.length < 1) {
             chatter.sendMessage(Messages.chatUsage());
             return;
@@ -68,16 +74,18 @@ public class ChatCommand extends Command {
         if (args.length < 1) {
             return;
         }
+        
+        String channelName = args.length >= 2 ? args[1] : args[0];
 
-        Channel channel = manager.getChannel(args[1]);
+        Channel channel = manager.getChannel(channelName);
 
         if (channel == null) {
-            chatter.sendMessage(Messages.channelDoesNotExist(args[1]));
+            chatter.sendMessage(Messages.channelDoesNotExist(channelName));
             return;
         }
 
         if (!channel.hasChatter(chatter)) {
-            chatter.sendMessage(Messages.notInChannel(args[1]));
+            chatter.sendMessage(Messages.notInChannel(channelName));
             return;
         }
 
@@ -146,7 +154,7 @@ public class ChatCommand extends Command {
                 return;
             }
         
-            chatter.sendMessage(Messages.channelListElement(current.getName()));
+            chatter.sendMessage(Messages.channelListElement(current.getName(), current.hasChatter(chatter)));
             empty = false;
         }
         
@@ -155,7 +163,7 @@ public class ChatCommand extends Command {
         }
     }
 
-    private void handleLeave(CommandSender sender, String[] args, ChannelManager manager, Chatter chatter) {
+	private void handleLeave(CommandSender sender, String[] args, ChannelManager manager, Chatter chatter) {
         if (!sender.hasPermission("bsocial.command.focus")) {
             sender.sendMessage(ProxyServer.getInstance().getTranslation("no_permission"));
             return;

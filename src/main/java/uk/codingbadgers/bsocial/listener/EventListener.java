@@ -55,6 +55,9 @@ public class EventListener implements Listener {
                 case CAPS:
                     message = message.toLowerCase();
                     break;
+				case NONE:
+				default:
+					break;
             }
         }
 

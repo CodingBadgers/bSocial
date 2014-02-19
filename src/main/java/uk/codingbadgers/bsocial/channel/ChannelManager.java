@@ -43,7 +43,10 @@ public class ChannelManager {
     }
 
     public void addChannel(Channel channel) {
+    	channel.setup();
+        channel.save();
         channels.add(channel);
+        
         ProxyServer.getInstance().getPluginManager().registerCommand(bSocial.getInstance(), new QuickMessageCommand(channel));
     }
 
@@ -60,7 +63,13 @@ public class ChannelManager {
             }
         }
 
-        defaultChannel = channels.get(0);
+        defaultChannel = getChannel(bSocial.getConfig().getDefaultChannel());
+    }
+    
+    public void saveChannels() {
+        for (Channel channel : channels) {
+        	channel.save();
+        }
     }
 
     public boolean exists(String name) {
@@ -69,5 +78,6 @@ public class ChannelManager {
 
     public void removeChannel(Channel channel) {
         channels.remove(channel);
+        channel.delete();
     }
 }

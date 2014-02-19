@@ -1,3 +1,6 @@
 target/
 .classpath
 .project
+.settings
+dependency-reduced-pom.xml
+nb-configuration.xml

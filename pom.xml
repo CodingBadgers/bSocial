@@ -20,6 +20,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.12.2</version>
@@ -52,6 +58,27 @@
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-shade-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <id>shade</id>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <relocations>
+                        <relocation>
+                            <pattern>org.apache.commons</pattern>
+                            <shadedPattern>uk.codingbadgers.libs.org.apache.common</shadedPattern>
+                        </relocation>
+                    </relocations>
                 </configuration>
             </plugin>
         </plugins>

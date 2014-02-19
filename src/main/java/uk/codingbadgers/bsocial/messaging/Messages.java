@@ -13,11 +13,11 @@ public class Messages {
     }
 
     private static BaseComponent createComponent(String message, ChatColor color) {
-        return new ComponentBuilder(message).bold(false).color(color).create()[0];
+        return new ComponentBuilder(message).color(color).create()[0];
     }
 
     private static BaseComponent createPrefix() {
-        return new ComponentBuilder("[bSocial] ").bold(true).color(ChatColor.BLUE).create()[0];
+        return new ComponentBuilder("[bSocial] ").color(ChatColor.BLUE).create()[0];
     }
     
     public static BaseComponent[] chatUsage() {
@@ -57,7 +57,7 @@ public class Messages {
     public static BaseComponent[] channelDoesNotExist(String channel) {
         return new BaseComponent[]{
             createPrefix(),
-            createComponent("The channel" + channel + " does not exist", ChatColor.RED)
+            createComponent("The channel " + channel + " does not exist", ChatColor.RED)
         };
     }
 
@@ -110,10 +110,10 @@ public class Messages {
         };
     }
 
-    public static BaseComponent[] channelListElement(String name) {
+    public static BaseComponent[] channelListElement(String name, boolean inChannel) {
         return new BaseComponent[]{
             createPrefix(),
-            createComponent("- " + name, ChatColor.AQUA)
+            createComponent("- " + name, inChannel ? ChatColor.GREEN : ChatColor.RED)
         };
     }
 
@@ -239,5 +239,19 @@ public class Messages {
             createComponent("Please do not spam the chat", ChatColor.RED)
         };
     }
+
+	public static BaseComponent[] activeChanged(String name) {
+        return new BaseComponent[]{
+                createPrefix(),
+                createComponent("Your active channel has been changed to " + name, ChatColor.RED)
+        };
+	}
+
+	public static BaseComponent[] nullChatter() {
+        return new BaseComponent[]{
+                createPrefix(),
+                createComponent("A unexpected error has occured, please tell staff", ChatColor.RED)
+        };
+	}
 
 }

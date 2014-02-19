@@ -1,6 +1,7 @@
 package uk.codingbadgers.bsocial;
 
 import lombok.Getter;
+import uk.codingbadgers.bsocial.logging.LogHandlers;
 
 public class Config {
 
@@ -14,6 +15,9 @@ public class Config {
     }
     
     @Getter
+    private final String defaultChannel = "";
+    
+    @Getter
     private final int configVersion = bSocial.CURRENT_CONFIG_VERSION;
 
     @Getter
@@ -24,5 +28,8 @@ public class Config {
 
     @Getter
     private final AntiSpam antiSpamSettings = new AntiSpam();
+    
+    @Getter
+    private final LogHandlers logHandler = LogHandlers.CONSOLE;
     
 }
