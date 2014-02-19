@@ -29,7 +29,11 @@ public class bSocial extends Plugin {
 
 	public static final int CURRENT_CONFIG_VERSION = 0x01;
 	@Getter
-	private static final Gson gson = new GsonBuilder().setExclusionStrategies(new JsonExclusionStrategy()).setFieldNamingPolicy(FieldNamingPolicy.IDENTITY).setPrettyPrinting().create();
+	private static final Gson gson = new GsonBuilder()
+										.setExclusionStrategies(new JsonExclusionStrategy())
+										.setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
+										.setPrettyPrinting()
+										.create();
 
 	@Getter
 	private static bSocial instance;

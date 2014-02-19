@@ -1,6 +1,9 @@
 package uk.codingbadgers.bsocial.logging;
 
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import uk.codingbadgers.bsocial.bSocial;
 import uk.codingbadgers.bsocial.exception.ConfigException;
+import uk.codingbadgers.bsocial.json.JsonExclusionStrategy;
 import uk.codingbadgers.bsocial.json.NonSerialized;
 
 /**
@@ -25,7 +29,10 @@ public class JsonLogHandler implements LoggingHandler {
 
 	private static final DateFormat LOG_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static final DateFormat FILE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-	private static final Gson GSON = bSocial.getGson();
+	private static final Gson GSON = new GsonBuilder()
+												.setExclusionStrategies(new JsonExclusionStrategy())
+												.setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
+												.create();
 
 	@Data
 	@AllArgsConstructor
